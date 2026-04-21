@@ -32,6 +32,13 @@ public class PostController {
 
         return post;
     }
+
+    @DeleteMapping("/{id}")
+    public String deletePost(@PathVariable String id) {
+        posts.removeIf(post -> post.get("id").equals(id));
+        return "Post deleted";
+    }
+
     public PostController() {
 
         Map<String, String> post1 = new HashMap<>();
