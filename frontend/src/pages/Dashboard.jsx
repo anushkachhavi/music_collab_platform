@@ -13,13 +13,13 @@ export default function Dashboard() {
   const [posts, setPosts] = useState([]);
   const [caption, setCaption] = useState("");
 
-  // protect route
+  // 🔒 protect route
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) navigate("/");
   }, [navigate]);
 
-  // fetch posts
+  // 📥 fetch posts
   const fetchPosts = async () => {
     try {
       const res = await API.get("/posts");
@@ -33,7 +33,42 @@ export default function Dashboard() {
     fetchPosts();
   }, []);
 
-  // CREATE POST
+  // ✨ DUMMY POSTS (ALWAYS visible)
+  const dummyPosts = [
+    {
+      id: "d1",
+      username: "Arjun Khanna",
+      role: "🎸 Guitarist",
+      content: "Looking for a vocalist for my indie track 🎶",
+      time: "2h ago",
+    },
+    {
+      id: "d2",
+      username: "Sneha Rao",
+      role: "🎹 Producer",
+      content: "Just finished a Bollywood EDM remix 🔥",
+      time: "5h ago",
+    },
+    {
+      id: "d3",
+      username: "Maya Venugopal",
+      role: "🎤 Vocalist",
+      content: "Looking for a guitarist to finish my track 🌙",
+      time: "1d ago",
+    },
+    {
+      id: "d4",
+      username: "Rohan Kulkarni",
+      role: "🥁 Drummer",
+      content: "Dropped new drum loops pack 🥁 Free for collabs!",
+      time: "2d ago",
+    },
+  ];
+
+  // 🚀 ALWAYS combine real + dummy
+  const postsToShow = [...posts, ...dummyPosts];
+
+  // ➕ CREATE POST
   const handlePost = async () => {
     if (!caption.trim()) {
       alert("Write something first");
@@ -55,12 +90,10 @@ export default function Dashboard() {
     }
   };
 
-  // DELETE POST
+  // 🗑 DELETE POST
   const handleDelete = async (id) => {
     try {
       await API.delete(`/posts/${id}`);
-
-      // remove from UI instantly
       setPosts((prev) => prev.filter((p) => p.id !== id));
     } catch (err) {
       console.error(err);
@@ -77,7 +110,7 @@ export default function Dashboard() {
 
         <div className="feed">
 
-          {/* CREATE POST BOX */}
+          {/* 📝 CREATE POST BOX */}
           <div
             style={{
               marginBottom: "20px",
@@ -116,24 +149,21 @@ export default function Dashboard() {
             </button>
           </div>
 
-          {/* POSTS */}
-          {posts.length === 0 ? (
-            <div>No posts yet</div>
-          ) : (
-            posts.map((p) => (
-              <PostCard
-                key={p.id}
-                user={p.user}
-                role={p.role}
-                time={p.time}
-                caption={p.caption}
-                onDelete={() => handleDelete(p.id)} // IMPORTANT
-                isOwner={
-                  p.user === localStorage.getItem("username")
-                } // optional
-              />
-            ))
-          )}
+          {/* 📢 POSTS */}
+          {postsToShow.map((p) => (
+            <PostCard
+              key={p.id}
+              user={p.user || p.username}
+              role={p.role}
+              time={p.time}
+              caption={p.caption || p.content}
+              onDelete={() => handleDelete(p.id)}
+              isOwner={
+                p.user && p.user === localStorage.getItem("username")
+              }
+            />
+          ))}
+
         </div>
 
         <RightPanel />
