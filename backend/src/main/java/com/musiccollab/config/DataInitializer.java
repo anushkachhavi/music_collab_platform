@@ -15,9 +15,7 @@ public class DataInitializer {
     @PostConstruct
     public void init() {
 
-        if (postRepository.count() > 0) {
-            return;
-        }
+        System.out.println("🔥 DATA INITIALIZER RUNNING");
 
         Post p1 = new Post();
         p1.setUsername("Anushka");
