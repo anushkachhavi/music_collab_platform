@@ -1,19 +1,43 @@
 import { FaHeart, FaCommentDots } from "react-icons/fa";
 import { IoMusicalNotes } from "react-icons/io5";
 
-export default function PostCard({ user, role, time, caption }) {
+export default function PostCard({
+  user,
+  role,
+  time,
+  caption,
+  onDelete,     
+  isOwner       
+}) {
   return (
     <div className="post-card">
+
       {/* HEADER */}
       <div className="post-header">
         <div className="post-avatar">{user[0]}</div>
 
-        <div>
+        <div style={{ flex: 1 }}>
           <div className="post-user">{user}</div>
           <div className="post-meta">
             🎸 {role.toUpperCase()} • {time}
           </div>
         </div>
+
+        {/* DELETE BUTTON (TOP RIGHT) */}
+        {isOwner && (
+          <button
+            onClick={onDelete}
+            style={{
+              background: "transparent",
+              color: "#ff4d4d",
+              border: "none",
+              fontSize: "14px",
+              cursor: "pointer"
+            }}
+          >
+            Delete ❌
+          </button>
+        )}
       </div>
 
       {/* CAPTION */}

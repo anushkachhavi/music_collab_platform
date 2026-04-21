@@ -13,13 +13,13 @@ export default function Dashboard() {
   const [posts, setPosts] = useState([]);
   const [caption, setCaption] = useState("");
 
-  // 🔐 protect route
+  // protect route
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) navigate("/");
   }, [navigate]);
 
-  // 📡 fetch posts
+  // fetch posts
   const fetchPosts = async () => {
     try {
       const res = await API.get("/posts");
@@ -33,7 +33,7 @@ export default function Dashboard() {
     fetchPosts();
   }, []);
 
-  // ✅ CREATE POST
+  // CREATE POST
   const handlePost = async () => {
     if (!caption.trim()) {
       alert("Write something first");
@@ -47,11 +47,24 @@ export default function Dashboard() {
         role: "Artist",
       });
 
-      setCaption(""); // clear input
-      fetchPosts();   // refresh feed
+      setCaption("");
+      fetchPosts();
     } catch (err) {
       console.error(err);
       alert("Failed to post");
+    }
+  };
+
+  // DELETE POST
+  const handleDelete = async (id) => {
+    try {
+      await API.delete(`/posts/${id}`);
+
+      // remove from UI instantly
+      setPosts((prev) => prev.filter((p) => p.id !== id));
+    } catch (err) {
+      console.error(err);
+      alert("Delete failed");
     }
   };
 
@@ -64,13 +77,15 @@ export default function Dashboard() {
 
         <div className="feed">
 
-          {/* 🔥 CREATE POST BOX */}
-          <div style={{
-            marginBottom: "20px",
-            padding: "15px",
-            background: "#111",
-            borderRadius: "10px"
-          }}>
+          {/* CREATE POST BOX */}
+          <div
+            style={{
+              marginBottom: "20px",
+              padding: "15px",
+              background: "#111",
+              borderRadius: "10px",
+            }}
+          >
             <textarea
               placeholder="What's on your mind? 🎵"
               value={caption}
@@ -81,7 +96,7 @@ export default function Dashboard() {
                 borderRadius: "8px",
                 border: "none",
                 outline: "none",
-                resize: "none"
+                resize: "none",
               }}
             />
 
@@ -94,7 +109,7 @@ export default function Dashboard() {
                 color: "white",
                 border: "none",
                 borderRadius: "6px",
-                cursor: "pointer"
+                cursor: "pointer",
               }}
             >
               Post 🚀
@@ -105,13 +120,17 @@ export default function Dashboard() {
           {posts.length === 0 ? (
             <div>No posts yet</div>
           ) : (
-            posts.map((p, i) => (
+            posts.map((p) => (
               <PostCard
-                key={i}
+                key={p.id}
                 user={p.user}
                 role={p.role}
                 time={p.time}
                 caption={p.caption}
+                onDelete={() => handleDelete(p.id)} // IMPORTANT
+                isOwner={
+                  p.user === localStorage.getItem("username")
+                } // optional
               />
             ))
           )}
