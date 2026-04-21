@@ -15,18 +15,31 @@ export default function Register() {
     }
 
     try {
-      await API.post("/auth/register", {
+      console.log("📡 Sending request to:", API.defaults.baseURL + "/auth/register");
+
+      const res = await API.post("/auth/register", {
         username,
         password,
       });
 
-      alert("Registered successfully!");
+      console.log("✅ Response:", res.data);
 
-      // ✅ go back to login
+      alert("Registered successfully!");
       navigate("/");
+
     } catch (err) {
-      console.error(err);
-      alert(err.response?.data || "Registration failed");
+      console.error("❌ FULL ERROR:", err);
+
+      if (err.response) {
+        console.error("❌ Backend error:", err.response.data);
+        alert(err.response.data);
+      } else if (err.request) {
+        console.error("❌ No response received:", err.request);
+        alert("Server not reachable");
+      } else {
+        console.error("❌ Error:", err.message);
+        alert("Something went wrong");
+      }
     }
   };
 
@@ -68,7 +81,6 @@ export default function Register() {
             Register →
           </button>
 
-          {/* 🔁 Back to login */}
           <div className="login-footer">
             Already have an account?{" "}
             <span

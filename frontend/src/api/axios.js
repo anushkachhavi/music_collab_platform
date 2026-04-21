@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://music-collab-platform-08yw.onrender.com/api", // FIXED PORT
+  baseURL: "https://music-collab-platform-zzyf.onrender.com/api",
 });
 
 API.interceptors.request.use((req) => {
